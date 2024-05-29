@@ -1,0 +1,96 @@
+DROP DATABASE IF EXISTS information;
+CREATE DATABASE IF NOT EXISTS information;
+
+CREATE TABLE Emploeey(
+    Emp_ID int(10)PRIMARY KEY,
+    Emp_Fname varchar(20),
+    Emp_Lname varchar(20),
+    Age varchar(20),
+    EmailID varchar(200),
+    PhoneNO varchar(12),
+    Address varchar(100)
+);
+
+CREATE TABLE Client(
+    ClientID int(10) PRIMARY KEY,
+    ClientFName varchar(20),
+    ClientLName varchar(20),
+    Age varchar(20),
+    ClientEmailID varchar(200),
+    PhoneNo varchar(12),
+    Address varchar(20),
+    Emp_ID int(10),
+    FOREIGN KEY(Emp_ID)REFERENCES Emploeey(Emp_ID)
+    );
+CREATE TABLE project(
+    ProjectID int(10) PRIMARY KEY,
+    Emp_ID int(10),
+    ClientID int(10),
+    ProjectName varchar(20),
+    ProjectStartDate date,
+    FOREIGN KEY(Emp_ID)REFERENCES Emploeey(Emp_ID),
+    FOREIGN KEY(ClientID)REFERENCES Client(ClientID)
+    );
+   
+INSERT INTO Emploeey (Emp_ID, Emp_Fname, Emp_Lname, Age, EmailID, PhoneNO, Address)
+VALUES
+(1, 'John', 'Doe', '30', 'john.doe@example.com', '1234567890', '123 Main St'),
+(2, 'Jane', 'Smith', '25', 'jane.smith@example.com', '9876543210', '456 Elm St'),
+(3, 'Michael', 'Johnson', '35', 'michael.johnson@example.com', '5551234567', '789 Oak St');
+
+-- Inserting data into the Client table
+INSERT INTO Client (ClientID, ClientFName, ClientLName, Age, ClientEmailID, PhoneNo, Address, Emp_ID)
+VALUES
+(1, 'Alice', 'Brown', '40', 'alice.brown@example.com', '1112223333', '321 Pine St', 1),
+(2, 'Bob', 'Davis', '45', 'bob.davis@example.com', '4445556666', '654 Cedar St', 2),
+(3, 'Carol', 'Evans', '50', 'carol.evans@example.com', '7778889999', '987 Maple St', 3);
+
+-- Inserting data into the project table
+INSERT INTO project (ProjectID, Emp_ID, ClientID, ProjectName, ProjectStartDate)
+VALUES
+(1, 1, 1, 'Project A', '2024-01-15'),
+(2, 2, 2, 'Project B', '2024-02-20'),
+(3, 3, 3, 'Project C', '2024-03-25');
+
+
+SELECT Emploeey.Emp_ID,Emploeey.Emp_Fname,Emploeey.Emp_Lname
+FROM Emploeey
+INNER JOIN project ON Emploeey.Emp_ID = project.Emp_ID;
+
+SELECT Emploeey.Emp_ID, Emploeey.Emp_Fname,Emploeey.Emp_Lname
+FROM Emploeey
+INNER JOIN project ON Emploeey.Emp_ID = project.Emp_ID
+WHERE project.Emp_ID= 1;
+
+SELECT Emploeey.Emp_ID,Emploeey.Emp_Fname, Emploeey.EmailID, Client.ClientID
+FROM Emploeey
+INNER JOIN Client ON Emploeey.Emp_ID = Client.Emp_ID;
+
+
+SELECT Emploeey.Emp_ID, Emploeey.Emp_Fname,Emploeey.PhoneNO,Client.PhoneNo,
+project.ProjectName
+FROM Emploeey
+INNER JOIN project ON Emploeey.Emp_ID = project.ProjectID
+INNER JOIN Client ON project.ProjectID=Client.ClientID;
+   
+SELECT Emploeey.Emp_ID,Emploeey.Emp_Fname,Emploeey.Address,Client.ClientID,
+project.ProjectName
+FROM Emploeey
+INNER JOIN Client ON Emploeey.Emp_ID = Client.ClientID
+INNER JOIN project ON Client.ClientID = project.ProjectID
+GROUP BY Emp_ID;
+
+SELECT Emploeey.Emp_ID,Emploeey.Emp_Fname
+FROM Emploeey
+LEFT JOIN project
+ON Emploeey.Emp_ID = project.ProjectID;
+
+SELECT Emploeey.Emp_ID ,Emploeey.Emp_Fname,Emploeey.Emp_Lname
+FROM Emploeey
+RIGHT JOIN Client ON Emploeey.Emp_ID = Client.Emp_ID
+;
+
+SELECT Emploeey.Emp_Fname,project.ProjectID
+FROM Emploeey
+FULL OUTER JOIN project ON Emploeey.Emp_ID = project.Emp_ID
+ORDER BY Emploeey.Emp_Fname;
